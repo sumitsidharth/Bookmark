@@ -1,14 +1,28 @@
 {% load thumbnail %}
 {% for image in images %}
-    <div class="image">
-        <a href="{{ image.get_absolute_url }}">
-            {% thumbnail image.image 300x300 crop="smart" as im %}
-            <img src="{{ im.url }}">
+    <div class="image-item scroll-reveal">
+        <a href="{{ image.get_absolute_url }}" style="text-decoration: none; display: block; color: inherit;">
+            <div class="image-wrapper" style="overflow: hidden; position: relative;">
+                {% thumbnail image.image 400x400 crop="smart" as im %}
+                <img src="{{ im.url }}" alt="{{ image.title }}" style="transition: transform 0.6s var(--ease-out);">
+                <div class="image-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); opacity: 0; transition: opacity 0.3s;"></div>
+            </div>
+            <div class="info" style="padding: 1.5rem; background: var(--background-elevated); border-top: 1px solid var(--border-default);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ image.title }}</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--foreground-muted);">By {{ image.user.first_name|default:image.user.username }}</span>
+                    <span style="font-size: 0.8rem; color: var(--accent); font-weight: 500;">{{ image.users_like.count }} likes</span>
+                </div>
+            </div>
         </a>
-        <div class="info">
-            <a href="{{ image.get_absolute_url }}" class="title">
-                {{ image.title }}
-            </a>
-        </div>
     </div>
 {% endfor %}
+
+<style>
+.image-item:hover img {
+    transform: scale(1.05);
+}
+.image-item:hover .image-overlay {
+    opacity: 1;
+}
+</style>

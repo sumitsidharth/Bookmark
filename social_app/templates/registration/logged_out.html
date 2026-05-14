@@ -3,19 +3,14 @@
 {% block title %}Logged out — Bookmarks{% endblock %}
 
 {% block content %}
-
-<h1>You've been logged out</h1>
-
-<div class="card-success">
-  <span class="icon">👋</span>
-  <div>
-    <h2>See you soon!</h2>
-    <p>You have been successfully signed out of your Bookmarks account.</p>
-  </div>
+<div class="success-container scroll-reveal" style="max-width: 600px; margin: 4rem auto; text-align: center;">
+    <div class="success-icon" style="font-size: 5rem; margin-bottom: 2rem;">🌙</div>
+    <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1.5rem;">Session Ended.</h1>
+    <p style="color: var(--foreground-muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 3rem;">
+        You've been successfully logged out. Your session data has been cleared from this device.
+    </p>
+    <div class="card" style="padding: 2rem;">
+        <a href="{% url 'login' %}" class="btn btn-primary" style="width: 100%; padding: 1rem;">Sign back in →</a>
+    </div>
 </div>
-
-<p class="mt-4">
-  <a href="{% url 'login' %}" class="btn-primary">Sign in again →</a>
-</p>
-
 {% endblock %}

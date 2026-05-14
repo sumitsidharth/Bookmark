@@ -1,41 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Images bookmarked{% endblock %}
+{% block title %}Images — Discover{% endblock %}
 
 {% block content %}
-    <h1>Images bookmarked</h1>
-    <div id="image-list">
-        {% include "images/image/list_images.html" %}
-    </div>
+<div class="page-header scroll-reveal" style="margin-bottom: 4rem;">
+    <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1rem;">Discovery</h1>
+    <p style="color: var(--foreground-muted); font-size: 1.1rem;">Explore the visual collective.</p>
+</div>
+
+<div id="image-list" class="scroll-reveal" style="animation-delay: 0.2s;">
+    {% include "images/image/list_images.html" %}
+</div>
+
+<div id="loading" style="text-align: center; padding: 4rem; display: none;">
+    <div class="shimmer" style="width: 40px; height: 40px; border: 3px solid var(--border-default); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+</div>
+
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
 {% endblock %}
 
 {% block domready %}
     var page = 1;
     var emptyPage = false;
     var blockRequest = false;
+    var loadingEl = document.getElementById('loading');
 
     window.addEventListener('scroll', function(e) {
         var margin = document.body.clientHeight - window.innerHeight - 200;
         if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
             blockRequest = true;
             page += 1;
+            loadingEl.style.display = 'block';
 
             fetch('?images_only=1&page=' + page)
             .then(response => response.text())
             .then(html => {
-                if (html === '') {
+                loadingEl.style.display = 'none';
+                if (html.trim() === '') {
                     emptyPage = true;
                 }
                 else {
                     var imageList = document.getElementById('image-list');
                     imageList.insertAdjacentHTML('beforeEnd', html);
                     blockRequest = false;
+                    
+                    // Re-run intersection observer for new elements
+                    // (The one in base.html handles .scroll-reveal)
                 }
             })
+            .catch(err => {
+                loadingEl.style.display = 'none';
+                console.error(err);
+            });
         }
     });
 
-    // Launch scroll event
-    const scrollEvent = new Event('scroll');
-    window.dispatchEvent(scrollEvent);
+    // Initial check
+    if (document.body.clientHeight <= window.innerHeight) {
+        const scrollEvent = new Event('scroll');
+        window.dispatchEvent(scrollEvent);
+    }
 {% endblock %}

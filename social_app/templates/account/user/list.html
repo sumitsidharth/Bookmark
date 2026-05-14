@@ -1,22 +1,41 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 
-{% block title %}People{% endblock %}
+{% block title %}People — Discovery{% endblock %}
 
 {% block content %}
-    <h1>People</h1>
-    <div id="people-list">
-        {% for user in users %}
-            <div class="user">
-                <a href="{{ user.get_absolute_url }}">
-                    <img src="{% thumbnail user.profile.photo 180x180 %}" />
-                </a>
-                <div class="info">
-                    <a href="{{ user.get_absolute_url }}" class="title">
-                        {{ user.get_full_name }}
-                    </a>
+<div class="page-header scroll-reveal" style="margin-bottom: 4rem;">
+    <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1rem;">Community</h1>
+    <p style="color: var(--foreground-muted); font-size: 1.1rem;">Connect with curators from around the globe.</p>
+</div>
+
+<div id="people-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem;">
+    {% for user in users %}
+        <div class="user-card card scroll-reveal" style="text-align: center; padding: 2.5rem 1.5rem; animation-delay: {{ forloop.counter0|add:1|multiply:0.05 }}s;">
+            <a href="{{ user.get_absolute_url }}" style="text-decoration: none; display: block; color: inherit;">
+                <div class="avatar-wrapper" style="margin-bottom: 1.5rem; position: relative; display: inline-block;">
+                    {% if user.profile.photo %}
+                        {% thumbnail user.profile.photo 120x120 crop="smart" as im %}
+                        <img src="{{ im.url }}" alt="{{ user.username }}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--border-default); transition: border-color 0.3s;">
+                    {% else %}
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--surface); border: 3px solid var(--border-default); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: var(--accent); transition: border-color 0.3s;">
+                            {{ user.username|first|upper }}
+                        </div>
+                    {% endif %}
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">{{ user.get_full_name|default:user.username }}</h3>
+                <div style="font-size: 0.85rem; color: var(--foreground-subtle); margin-bottom: 1.5rem;">
+                    {{ user.images_created.count }} bookmarks
+                </div>
+                <span class="btn btn-ghost" style="font-size: 0.8rem; border: 1px solid var(--border-default); width: 100%;">View Profile</span>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+.user-card:hover img, .user-card:hover .avatar-wrapper > div {
+    border-color: var(--accent);
+}
+</style>
 {% endblock %}

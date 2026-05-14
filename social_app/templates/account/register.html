@@ -3,138 +3,113 @@
 {% block title %}Create an account — Bookmarks{% endblock %}
 
 {% block content %}
+<div class="auth-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; min-height: 60vh;">
+    <div class="auth-copy scroll-reveal">
+        <div class="badge" style="display: inline-block; padding: 0.4rem 1rem; background: var(--surface); border: 1px solid var(--border-accent); border-radius: var(--radius-full); font-size: 0.8rem; color: var(--accent); margin-bottom: 2rem;">
+            ✦ Join the collective
+        </div>
+        <h1 class="gradient-text" style="font-size: 4rem; margin-bottom: 1.5rem;">The next level of curation.</h1>
+        <p style="color: var(--foreground-muted); font-size: 1.1rem; max-width: 440px; line-height: 1.7;">
+            Create your account today and start organizing your digital universe with professional-grade tools.
+        </p>
+    </div>
 
-<div class="hero-section">
-  <div class="clay-pill">
-    <span class="dot"></span> Join 50,000+ teams already using Acme
-  </div>
-  <h1>Transform the way<br>your team works</h1>
-  <p style="max-width: 600px; margin: 0 auto 40px auto; color: var(--text-secondary); font-size: 18px; line-height: 1.6;">
-    Acme Platform brings your team together with powerful tools designed to streamline workflows, boost productivity, and drive results.
-  </p>
+    <div class="auth-form-card card scroll-reveal" style="animation-delay: 0.2s;">
+        <h2 style="margin-bottom: 2rem;">Create Account</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="field-group">
+                <label class="field-label" for="{{ user_form.username.id_for_label }}">Username</label>
+                <div class="input-wrapper">
+                    {{ user_form.username }}
+                </div>
+                {% if user_form.username.errors %}
+                <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ user_form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="{{ user_form.first_name.id_for_label }}">First Name</label>
+                <div class="input-wrapper">
+                    {{ user_form.first_name }}
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="{{ user_form.email.id_for_label }}">Email</label>
+                <div class="input-wrapper">
+                    {{ user_form.email }}
+                </div>
+                {% if user_form.email.errors %}
+                <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ user_form.email.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="{{ user_form.password.id_for_label }}">Password</label>
+                <div class="input-wrapper">
+                    {{ user_form.password }}
+                </div>
+                {% if user_form.password.errors %}
+                <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ user_form.password.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="{{ user_form.password2.id_for_label }}">Confirm Password</label>
+                <div class="input-wrapper">
+                    {{ user_form.password2 }}
+                </div>
+                {% if user_form.password2.errors %}
+                <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ user_form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Account →</button>
+        </form>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-default);">
+            <p style="color: var(--foreground-muted); font-size: 0.85rem;">
+                Already have an account? <a href="{% url 'login' %}" style="color: var(--accent); text-decoration: none; font-weight: 500;">Sign in</a>
+            </p>
+        </div>
+    </div>
 </div>
 
-<form method="post" id="register-form" class="form-wrapper" style="margin: 0 auto;">
-  {% csrf_token %}
-
-  <!-- Username -->
-  <div class="field-group {% if user_form.username.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_username">
-      Username <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">👤</span>
-      <input type="text" id="id_username" name="username" placeholder="Choose a username"
-        value="{{ user_form.username.value|default:'' }}" autocomplete="username" aria-required="true"
-        aria-invalid="{% if user_form.username.errors %}true{% else %}false{% endif %}" {% if user_form.username.errors %}aria-describedby="username-error"{% endif %} autofocus>
-    </div>
-    {% for error in user_form.username.errors %}
-    <span class="field-error" id="username-error">{{ error }}</span>
-    {% endfor %}
-    <span class="field-help">Letters, digits and @/./+/-/_ only.</span>
-  </div>
-
-  <!-- First name -->
-  <div class="field-group {% if user_form.first_name.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_first_name">First name</label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🏷</span>
-      <input type="text" id="id_first_name" name="first_name" placeholder="Your first name"
-        value="{{ user_form.first_name.value|default:'' }}" autocomplete="given-name"
-        aria-invalid="{% if user_form.first_name.errors %}true{% else %}false{% endif %}" {% if user_form.first_name.errors %}aria-describedby="first_name-error"{% endif %}>
-    </div>
-    {% for error in user_form.first_name.errors %}
-    <span class="field-error" id="first_name-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <!-- Email -->
-  <div class="field-group {% if user_form.email.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_email">
-      Email address <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">✉️</span>
-      <input type="email" id="id_email" name="email" placeholder="you@example.com"
-        value="{{ user_form.email.value|default:'' }}" autocomplete="email" aria-required="true"
-        aria-invalid="{% if user_form.email.errors %}true{% else %}false{% endif %}" {% if user_form.email.errors %}aria-describedby="email-error"{% endif %}>
-    </div>
-    {% for error in user_form.email.errors %}
-    <span class="field-error" id="email-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <!-- Password -->
-  <div class="field-group {% if user_form.password.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_password">
-      Password <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🔒</span>
-      <input type="password" id="id_password" name="password" placeholder="Create a strong password"
-        autocomplete="new-password" aria-required="true"
-        aria-invalid="{% if user_form.password.errors %}true{% else %}false{% endif %}" {% if user_form.password.errors %}aria-describedby="password-error"{% endif %} oninput="checkStrength(this.value)">
-      <button type="button" class="pwd-toggle" onclick="togglePwd('id_password', this)"
-        aria-label="Show or hide password">👁</button>
-    </div>
-    <div class="strength-meter" aria-live="polite" aria-atomic="true">
-      <div class="strength-bar-track">
-        <div class="strength-bar-fill" id="strength-bar"></div>
-      </div>
-      <span class="strength-label" id="strength-label"></span>
-    </div>
-    {% for error in user_form.password.errors %}
-    <span class="field-error" id="password-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <!-- Confirm Password -->
-  <div class="field-group {% if user_form.password2.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_password2">
-      Confirm password <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🔒</span>
-      <input type="password" id="id_password2" name="password2" placeholder="Repeat your password"
-        autocomplete="new-password" aria-required="true"
-        aria-invalid="{% if user_form.password2.errors %}true{% else %}false{% endif %}" {% if user_form.password2.errors %}aria-describedby="password2-error"{% endif %}>
-      <button type="button" class="pwd-toggle" onclick="togglePwd('id_password2', this)"
-        aria-label="Show or hide password">👁</button>
-    </div>
-    {% for error in user_form.password2.errors %}
-    <span class="field-error" id="password2-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <button type="submit" class="btn-submit">Create my account →</button>
-</form>
-
-<p class="text-muted mt-4">
-  Already have an account? <a href="{% url 'login' %}">Sign in</a>.
-</p>
-
-<script>
-  function checkStrength(val) {
-    let cls = '', label = '';
-    const hasLower = /[a-z]/.test(val);
-    const hasUpper = /[A-Z]/.test(val);
-    const hasNum = /\d/.test(val);
-    const hasSym = /[^A-Za-z0-9]/.test(val);
-    const score = val.length >= 8 ? 1 : 0;
-    const variety = [hasLower, hasUpper, hasNum, hasSym].filter(Boolean).length;
-
-    if (val.length === 0) { cls = ''; label = ''; }
-    else if (val.length < 6 || variety < 2) { cls = 'weak'; label = 'Weak'; }
-    else if (val.length < 10 || variety < 3) { cls = 'fair'; label = 'Fair'; }
-    else if (val.length < 12 || variety < 4) { cls = 'good'; label = 'Good'; }
-    else { cls = 'strong'; label = 'Strong'; }
-
-    const bar = document.getElementById('strength-bar');
-    const lbl = document.getElementById('strength-label');
-    bar.className = 'strength-bar-fill' + (cls ? ' ' + cls : '');
-    lbl.className = 'strength-label' + (cls ? ' ' + cls : '');
-    lbl.textContent = label;
-  }
-</script>
-
+<style>
+@media (max-width: 900px) {
+    .auth-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    .auth-copy {
+        text-align: center;
+    }
+    .auth-copy h1 {
+        font-size: 3rem;
+    }
+    .auth-copy p {
+        margin: 0 auto;
+    }
+}
+/* Style the Django form widgets to match our design */
+input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    background: #0F0F12;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: var(--transition-fast);
+}
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(94, 106, 210, 0.2);
+}
+</style>
 {% endblock %}

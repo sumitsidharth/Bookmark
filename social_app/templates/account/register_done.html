@@ -1,21 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome! — Bookmarks{% endblock %}
+{% block title %}Account created — Bookmarks{% endblock %}
 
 {% block content %}
-
-<h1>Account created! 🎉</h1>
-
-<div class="card-success">
-  <span class="icon">✅</span>
-  <div>
-    <h2>Welcome, {{ new_user.first_name|default:new_user.username }}!</h2>
-    <p>Your Bookmarks account has been successfully created. You're all set to start saving your favourite links.</p>
-  </div>
+<div class="success-container scroll-reveal" style="max-width: 600px; margin: 4rem auto; text-align: center;">
+    <div class="success-icon" style="font-size: 5rem; margin-bottom: 2rem;">🎉</div>
+    <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1.5rem;">Welcome, {{ new_user.username }}!</h1>
+    <p style="color: var(--foreground-muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 3rem;">
+        Your account has been created successfully. You're now part of a global collective of curators.
+    </p>
+    <div class="card" style="padding: 2rem; border-color: var(--border-accent);">
+        <p style="margin-bottom: 2rem; color: var(--foreground);">Ready to start bookmarking?</p>
+        <a href="{% url 'login' %}" class="btn btn-primary" style="width: 100%; padding: 1rem;">Sign in to your account →</a>
+    </div>
 </div>
-
-<p class="mt-4">
-  <a href="{% url 'login' %}" class="btn-primary">Sign in to your account →</a>
-</p>
-
 {% endblock %}

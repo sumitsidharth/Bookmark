@@ -1,72 +1,106 @@
 {% extends "base.html" %}
 {% load thumbnail %}
 
-{% block title %}{{ user.get_full_name }}{% endblock %}
+{% block title %}{{ user.get_full_name|default:user.username }} — Bookmarks{% endblock %}
 
 {% block content %}
-    <h1>{{ user.get_full_name }}</h1>
-    <div class="profile-info">
-        <img src="{% thumbnail user.profile.photo 180x180 %}" class="user-detail" />
-        <div class="info">
-            {% with total_followers=user.followers.count %}
-                <div class="stats">
-                    <span class="count">
-                        <span class="total">{{ total_followers }}</span>
-                        follower{{ total_followers|pluralize }}
-                    </span>
-                </div>
-                <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
-                    {% if request.user not in user.followers.all %}
-                        Follow
-                    {% else %}
-                        Unfollow
-                    {% endif %}
-                </a>
-            {% endwith %}
-        </div>
+<div class="profile-header scroll-reveal" style="display: flex; align-items: center; gap: 4rem; margin-bottom: 6rem; background: var(--surface); padding: 4rem; border-radius: var(--radius-xl); border: 1px solid var(--border-default);">
+    <div class="profile-avatar">
+        {% if user.profile.photo %}
+            {% thumbnail user.profile.photo 180x180 crop="smart" as im %}
+            <img src="{{ im.url }}" alt="{{ user.username }}" style="width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--background-elevated); box-shadow: 0 0 0 1px var(--border-default), 0 20px 40px rgba(0,0,0,0.5);">
+        {% else %}
+            <div style="width: 160px; height: 160px; border-radius: 50%; background: var(--accent); border: 4px solid var(--background-elevated); display: flex; align-items: center; justify-content: center; font-size: 4rem; font-weight: 700; color: white; box-shadow: 0 0 0 1px var(--border-default), 0 20px 40px rgba(0,0,0,0.5);">
+                {{ user.username|first|upper }}
+            </div>
+        {% endif %}
     </div>
-    <div id="image-list" class="image-container">
+
+    <div class="profile-info" style="flex: 1;">
+        <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1.5rem;">{{ user.get_full_name|default:user.username }}</h1>
+        
+        <div style="display: flex; gap: 2rem; margin-bottom: 2.5rem;">
+            <div class="profile-stat">
+                <div class="total" style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">{{ user.followers.count }}</div>
+                <div style="font-size: 0.85rem; color: var(--foreground-muted); text-transform: uppercase; letter-spacing: 0.05em;">Followers</div>
+            </div>
+            <div class="profile-stat">
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--foreground);">{{ user.images_created.count }}</div>
+                <div style="font-size: 0.85rem; color: var(--foreground-muted); text-transform: uppercase; letter-spacing: 0.05em;">Bookmarks</div>
+            </div>
+        </div>
+
+        {% if request.user != user %}
+            <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" 
+               class="follow btn {% if request.user not in user.followers.all %}btn-primary{% else %}btn-ghost{% endif %}" 
+               style="padding: 0.8rem 2.5rem; border: 1px solid var(--accent);">
+                {% if request.user not in user.followers.all %}Follow{% else %}Unfollow{% endif %}
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="user-images-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+        <h2 style="font-size: 1.5rem;">Collection</h2>
+        <div style="height: 1px; flex: 1; background: var(--border-default); margin-left: 2rem;"></div>
+    </div>
+
+    <div id="image-list">
         {% include "images/image/list_images.html" with images=user.images_created.all %}
     </div>
+</div>
+
+<style>
+@media (max-width: 800px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+}
+</style>
 {% endblock %}
 
 {% block domready %}
-  var url = '{% url "user_follow" %}';
-  var options = {
-    method: 'POST',
-    headers: {'X-CSRFToken': csrftoken},
-    mode: 'same-origin'
-  }
+    var url = '{% url "user_follow" %}';
+    var options = {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken},
+        mode: 'same-origin'
+    }
 
-  document.querySelector('a.follow')
-          .addEventListener('click', function(e){
-    e.preventDefault();
-    var followButton = this;
+    document.querySelector('a.follow')?.addEventListener('click', function(e){
+        e.preventDefault();
+        var followButton = this;
 
-    // add request body
-    var formData = new FormData();
-    formData.append('id', followButton.dataset.id);
-    formData.append('action', followButton.dataset.action);
-    options['body'] = formData;
+        var formData = new FormData();
+        formData.append('id', followButton.dataset.id);
+        formData.append('action', followButton.dataset.action);
+        options['body'] = formData;
 
-    // send HTTP request
-    fetch(url, options)
-    .then(response => response.json())
-    .then(data => {
-      if (data['status'] === 'ok')
-      {
-        var previousAction = followButton.dataset.action;
+        fetch(url, options)
+        .then(response => response.json())
+        .then(data => {
+            if (data['status'] === 'ok') {
+                var previousAction = followButton.dataset.action;
+                var action = previousAction === 'follow' ? 'unfollow' : 'follow';
+                followButton.dataset.action = action;
+                followButton.innerHTML = action === 'follow' ? 'Follow' : 'Unfollow';
+                
+                if (action === 'follow') {
+                    followButton.classList.remove('btn-ghost');
+                    followButton.classList.add('btn-primary');
+                } else {
+                    followButton.classList.remove('btn-primary');
+                    followButton.classList.add('btn-ghost');
+                }
 
-        // toggle button text and data-action
-        var action = previousAction === 'follow' ? 'unfollow' : 'follow';
-        followButton.dataset.action = action;
-        followButton.innerHTML = action === 'follow' ? 'Follow' : 'Unfollow';
-
-        // update total followers
-        var followerCount = document.querySelector('span.count .total');
-        var totalFollowers = parseInt(followerCount.innerHTML);
-        followerCount.innerHTML = previousAction === 'follow' ? totalFollowers + 1 : totalFollowers - 1;
-      }
-    })
-  });
+                var followerCount = document.querySelector('.profile-stat .total');
+                var totalFollowers = parseInt(followerCount.innerHTML);
+                followerCount.innerHTML = previousAction === 'follow' ? totalFollowers + 1 : totalFollowers - 1;
+            }
+        })
+        .catch(err => console.error(err));
+    });
 {% endblock %}

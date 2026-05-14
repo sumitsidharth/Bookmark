@@ -3,87 +3,83 @@
 {% block title %}Sign in — Bookmarks{% endblock %}
 
 {% block content %}
-
-<div class="hero-section">
-  <div class="clay-pill">
-    <span class="dot"></span> Join 50,000+ teams already using Acme
-  </div>
-  <h1>Transform the way<br>your team works</h1>
-  <p style="max-width: 600px; margin: 0 auto 40px auto; color: var(--text-secondary); font-size: 18px; line-height: 1.6;">
-    Acme Platform brings your team together with powerful tools designed to streamline workflows, boost productivity, and drive results.
-  </p>
-</div>
-
-{% if form.errors %}
-<div class="error-banner" role="alert" style="max-width: 440px; margin: 0 auto 20px auto;">
-  Your username or password didn't match. Please try again.
-</div>
-{% endif %}
-
-<form action="{% url 'login' %}" method="post" id="login-form" class="form-wrapper" style="margin: 0 auto;">
-  {% csrf_token %}
-  <input type="hidden" name="next" value="{{ next }}">
-
-  <!-- Username -->
-  <div class="field-group {% if form.username.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_username">
-      Username <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">👤</span>
-      <input type="text"
-             id="id_username"
-             name="username"
-             placeholder="Enter your username"
-             value="{{ form.username.value|default:'' }}"
-             autocomplete="username"
-             aria-required="true"
-             aria-invalid="{% if form.username.errors %}true{% else %}false{% endif %}"
-             {% if form.username.errors %}aria-describedby="username-error"{% endif %}
-             autofocus>
+<div class="auth-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; min-height: 60vh;">
+    <div class="auth-copy scroll-reveal">
+        <div class="badge" style="display: inline-block; padding: 0.4rem 1rem; background: var(--surface); border: 1px solid var(--border-accent); border-radius: var(--radius-full); font-size: 0.8rem; color: var(--accent); margin-bottom: 2rem;">
+            ✦ Re-imagine your workflow
+        </div>
+        <h1 class="gradient-text" style="font-size: 4rem; margin-bottom: 1.5rem;">Welcome back<br>to the future.</h1>
+        <p style="color: var(--foreground-muted); font-size: 1.1rem; max-width: 440px; line-height: 1.7;">
+            Sign in to access your curated collection of bookmarks and discover what's new in your network.
+        </p>
     </div>
-    {% for error in form.username.errors %}
-      <span class="field-error" id="username-error">{{ error }}</span>
-    {% endfor %}
-  </div>
 
-  <!-- Password -->
-  <div class="field-group {% if form.password.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_password">
-      Password <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🔒</span>
-      <input type="password"
-             id="id_password"
-             name="password"
-             placeholder="Enter your password"
-             autocomplete="current-password"
-             aria-required="true"
-             aria-invalid="{% if form.password.errors %}true{% else %}false{% endif %}"
-             {% if form.password.errors %}aria-describedby="password-error"{% endif %}>
-      <button type="button" class="pwd-toggle" onclick="togglePwd('id_password', this)" aria-label="Show or hide password">👁</button>
+    <div class="auth-form-card card scroll-reveal" style="animation-delay: 0.2s;">
+        <h2 style="margin-bottom: 2rem;">Sign In</h2>
+        
+        {% if form.errors %}
+        <div class="error-banner" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); padding: 1rem; border-radius: var(--radius-sm); color: #f87171; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Invalid username or password. Please try again.
+        </div>
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <div class="field-group">
+                <label class="field-label" for="id_username">Username</label>
+                <div class="input-wrapper">
+                    <input type="text" name="username" id="id_username" placeholder="Enter your username" required autofocus>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label" for="id_password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="id_password" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign in →</button>
+        </form>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-default); display: flex; flex-direction: column; gap: 1rem;">
+            <a href="{% url 'password_reset' %}" style="color: var(--foreground-muted); font-size: 0.85rem; text-decoration: none;">Forgot password?</a>
+            <p style="color: var(--foreground-muted); font-size: 0.85rem;">
+                Don't have an account? <a href="{% url 'register' %}" style="color: var(--accent); text-decoration: none; font-weight: 500;">Create one</a>
+            </p>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="flex: 1; height: 1px; background: var(--border-default);"></div>
+                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--foreground-subtle);">Or continue with</span>
+                <div style="flex: 1; height: 1px; background: var(--border-default);"></div>
+            </div>
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-ghost" style="width: 100%; border: 1px solid var(--border-default);">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google" style="width: 18px; margin-right: 10px;">
+                Google
+            </a>
+        </div>
     </div>
-    {% for error in form.password.errors %}
-      <span class="field-error" id="password-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <button type="submit" class="btn-submit">Sign in →</button>
-</form>
-
-<p class="text-muted mt-4">
-  <a href="{% url 'password_reset' %}">🔑 Forgot your password?</a>
-</p>
-
-<div class="divider">or continue with</div>
-<div class="social">
-  <ul>
-    <li class="google">
-      <a href="{% url 'social:begin' 'google-oauth2' %}">Sign in with Google</a>
-    </li>
-  </ul>
 </div>
 
+<style>
+@media (max-width: 900px) {
+    .auth-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    .auth-copy {
+        text-align: center;
+    }
+    .auth-copy h1 {
+        font-size: 3rem;
+    }
+    .auth-copy p {
+        margin: 0 auto;
+    }
+}
+</style>
 {% endblock %}
-

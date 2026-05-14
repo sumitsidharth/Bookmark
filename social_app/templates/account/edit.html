@@ -1,134 +1,120 @@
 {% extends "base.html" %}
 
-{% block title %}Edit your account — Bookmarks{% endblock %}
+{% block title %}Edit Profile — Bookmarks{% endblock %}
 
 {% block content %}
+<div class="page-header scroll-reveal" style="margin-bottom: 4rem;">
+    <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1rem;">Profile Settings</h1>
+    <p style="color: var(--foreground-muted); font-size: 1.1rem;">Customize your digital identity.</p>
+</div>
 
-<h1>Edit your account</h1>
-<p>Update your personal information and profile photo below.</p>
-
-<form method="post" enctype="multipart/form-data" id="edit-account-form" class="form-wrapper">
-  {% csrf_token %}
-
-  <p class="form-section-title">Personal Information</p>
-
-  <!-- First name -->
-  <div class="field-group {% if user_form.first_name.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_first_name">First name</label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🏷</span>
-      <input type="text"
-             id="id_first_name"
-             name="first_name"
-             placeholder="Your first name"
-             value="{{ user_form.first_name.value|default:'' }}"
-             autocomplete="given-name"
-             aria-invalid="{% if user_form.first_name.errors %}true{% else %}false{% endif %}"
-             {% if user_form.first_name.errors %}aria-describedby="first_name-error"{% endif %}>
+<div class="edit-profile-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 4rem;">
+    <div class="profile-preview-sidebar scroll-reveal" style="animation-delay: 0.1s;">
+        <div class="card" style="text-align: center; padding: 3rem 2rem; position: sticky; top: 120px;">
+            <div id="image-preview" style="margin-bottom: 2rem;">
+                {% if request.user.profile.photo %}
+                    {% thumbnail request.user.profile.photo 200x200 crop="smart" as im %}
+                    <img src="{{ im.url }}" alt="Profile" style="width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--background-elevated); box-shadow: 0 0 0 1px var(--border-default);">
+                {% else %}
+                    <div style="width: 150px; height: 150px; border-radius: 50%; background: var(--accent); border: 4px solid var(--background-elevated); display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 700; color: white; margin: 0 auto; box-shadow: 0 0 0 1px var(--border-default);">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <h3 style="margin-bottom: 0.5rem;">{{ request.user.get_full_name|default:request.user.username }}</h3>
+            <p style="font-size: 0.85rem; color: var(--foreground-subtle);">Member since {{ request.user.date_joined|date:"M Y" }}</p>
+        </div>
     </div>
-    {% for error in user_form.first_name.errors %}
-      <span class="field-error" id="first_name-error">{{ error }}</span>
-    {% endfor %}
-  </div>
 
-  <!-- Last name -->
-  <div class="field-group {% if user_form.last_name.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_last_name">Last name</label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🏷</span>
-      <input type="text"
-             id="id_last_name"
-             name="last_name"
-             placeholder="Your last name"
-             value="{{ user_form.last_name.value|default:'' }}"
-             autocomplete="family-name"
-             aria-invalid="{% if user_form.last_name.errors %}true{% else %}false{% endif %}"
-             {% if user_form.last_name.errors %}aria-describedby="last_name-error"{% endif %}>
+    <div class="edit-profile-form scroll-reveal" style="animation-delay: 0.2s;">
+        <div class="card">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <h3 style="margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-default);">Personal Information</h3>
+                
+                <div class="field-group">
+                    <label class="field-label" for="{{ user_form.first_name.id_for_label }}">First Name</label>
+                    <div class="input-wrapper">
+                        {{ user_form.first_name }}
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="{{ user_form.last_name.id_for_label }}">Last Name</label>
+                    <div class="input-wrapper">
+                        {{ user_form.last_name }}
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="{{ user_form.email.id_for_label }}">Email</label>
+                    <div class="input-wrapper">
+                        {{ user_form.email }}
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 3rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-default);">Profile Details</h3>
+
+                <div class="field-group">
+                    <label class="field-label" for="{{ profile_form.date_of_birth.id_for_label }}">Date of Birth</label>
+                    <div class="input-wrapper">
+                        {{ profile_form.date_of_birth }}
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Profile Photo</label>
+                    <div class="file-drop-zone" style="border: 2px dashed var(--border-default); padding: 3rem; border-radius: var(--radius-md); text-align: center; transition: all 0.3s var(--ease-out); cursor: pointer;" onmouseover="this.style.borderColor='var(--accent)'; this.style.background='rgba(94,106,210,0.05)'" onmouseout="this.style.borderColor='var(--border-default)'; this.style.background='transparent'" onclick="document.getElementById('{{ profile_form.photo.id_for_label }}').click()">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">📷</div>
+                        <div style="color: var(--foreground-muted); font-size: 0.9rem;">Click to upload a new photo</div>
+                        <div style="color: var(--foreground-subtle); font-size: 0.75rem; margin-top: 0.5rem;">JPG, PNG or GIF • Max 5MB</div>
+                        {{ profile_form.photo }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 2rem; padding: 1rem 3rem;">Save Changes →</button>
+            </form>
+        </div>
     </div>
-    {% for error in user_form.last_name.errors %}
-      <span class="field-error" id="last_name-error">{{ error }}</span>
-    {% endfor %}
-  </div>
+</div>
 
-  <!-- Email -->
-  <div class="field-group {% if user_form.email.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_email">
-      Email address <span class="required-star" aria-hidden="true">*</span>
-    </label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">✉️</span>
-      <input type="email"
-             id="id_email"
-             name="email"
-             placeholder="you@example.com"
-             value="{{ user_form.email.value|default:'' }}"
-             autocomplete="email"
-             aria-required="true"
-             aria-invalid="{% if user_form.email.errors %}true{% else %}false{% endif %}"
-             {% if user_form.email.errors %}aria-describedby="email-error"{% endif %}>
-    </div>
-    {% for error in user_form.email.errors %}
-      <span class="field-error" id="email-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <p class="form-section-title">Profile</p>
-
-  <!-- Date of Birth -->
-  <div class="field-group {% if profile_form.date_of_birth.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_date_of_birth">Date of birth</label>
-    <div class="input-wrapper">
-      <span class="input-icon" aria-hidden="true">🎂</span>
-      <input type="date"
-             id="id_date_of_birth"
-             name="date_of_birth"
-             value="{{ profile_form.date_of_birth.value|default:'' }}"
-             aria-invalid="{% if profile_form.date_of_birth.errors %}true{% else %}false{% endif %}"
-             {% if profile_form.date_of_birth.errors %}aria-describedby="dob-error"{% endif %}>
-    </div>
-    {% for error in profile_form.date_of_birth.errors %}
-      <span class="field-error" id="dob-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <!-- Profile Photo -->
-  <div class="field-group {% if profile_form.photo.errors %}is-invalid{% endif %}">
-    <label class="field-label" for="id_photo">Profile photo</label>
-    <div class="file-upload-wrapper">
-      <label class="file-upload-label" for="id_photo" id="photo-label">
-        📷 Choose a photo…
-      </label>
-      <input type="file"
-             id="id_photo"
-             name="photo"
-             accept="image/*"
-             aria-describedby="photo-help"
-             onchange="updateFileName(this)">
-    </div>
-    <span class="field-help" id="photo-help">JPG, PNG or GIF · Max 5 MB</span>
-    {% for error in profile_form.photo.errors %}
-      <span class="field-error">{{ error }}</span>
-    {% endfor %}
-  </div>
-
-  <button type="submit" class="btn-submit">Save changes →</button>
-</form>
-
-<script>
-function updateFileName(input) {
-  const label = document.getElementById('photo-label');
-  const help = document.getElementById('photo-help');
-  if (input.files.length) {
-    label.classList.add('has-file');
-    label.textContent = '📷 ' + input.files[0].name;
-    help.textContent = 'Click to change file';
-  } else {
-    label.classList.remove('has-file');
-    label.textContent = '📷 Choose a photo…';
-    help.textContent = 'JPG, PNG or GIF · Max 5 MB';
-  }
+<style>
+/* Hide the default file input but keep it accessible */
+input[type="file"] {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
 }
-</script>
 
+@media (max-width: 900px) {
+    .edit-profile-grid {
+        grid-template-columns: 1fr;
+    }
+    .profile-preview-sidebar {
+        order: -1;
+    }
+}
+
+/* Style the Django form widgets */
+input[type="text"], input[type="email"], input[type="date"] {
+    width: 100%;
+    background: #0F0F12;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: var(--transition-fast);
+}
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(94, 106, 210, 0.2);
+}
+</style>
 {% endblock %}
-

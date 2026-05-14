@@ -10,178 +10,106 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link href="{% static 'css/base.css' %}?v=2.1" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}?v=3.0" rel="stylesheet">
 </head>
 
-<body class="clay-canvas">
-    <!-- Floating Background Blobs -->
+<body>
+    <!-- Background System -->
+    <div class="grid-overlay"></div>
     <div class="blob-container">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+        <div class="blob blob-primary"></div>
+        <div class="blob blob-secondary"></div>
+        <div class="blob blob-tertiary"></div>
     </div>
 
     <header id="header">
-        <div class="logo">
-            <span style="font-family: 'Nunito', sans-serif;">Acme Inc.</span>
-        </div>
+        <a href="/" class="logo accent-text">Bookmarks</a>
 
         {% if request.user.is_authenticated %}
         <nav class="desktop-nav">
             <ul class="menu">
-                <li {% if section == 'dashboard' %}class="selected" {% endif %}>
+                <li {% if section == 'dashboard' %}class="selected"{% endif %}>
                     <a href="{% url 'dashboard' %}">Dashboard</a>
                 </li>
                 <li {% if section == "images" %}class="selected"{% endif %}>
-                    <a href="{% url "images:list" %}">Images</a>
+                    <a href="{% url 'images:list' %}">Images</a>
                 </li>
-                <li {% if section == 'people' %}class="selected" {% endif %}>
+                <li {% if section == 'people' %}class="selected"{% endif %}>
                     <a href="{% url 'user_list' %}">People</a>
                 </li>
             </ul>
         </nav>
         <div class="header-actions">
             <div class="user-info desktop-only">
-                <span>Logged in as <strong>{{ request.user.first_name|default:request.user.username }}</strong></span>
+                <span>{{ request.user.first_name|default:request.user.username }}</span>
             </div>
             <form action="{% url 'logout' %}" method="post" class="desktop-only" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="logout-btn">Logout</button>
+                <button type="submit" class="btn btn-ghost">Logout</button>
             </form>
-            <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu" style="display:none;">
+                <span></span>
             </button>
         </div>
         {% else %}
         <nav class="desktop-nav">
-            <ul class="menu" style="background: transparent; box-shadow: none;">
-                <li><a href="#" style="color: var(--text-secondary); font-weight: 800;">Features</a></li>
-                <li><a href="#" style="color: var(--text-secondary); font-weight: 800;">Pricing</a></li>
-                <li><a href="#" style="color: var(--text-secondary); font-weight: 800;">About</a></li>
+            <ul class="menu">
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">About</a></li>
             </ul>
         </nav>
         <div class="header-actions">
-            <a href="{% url 'login' %}" class="btn-ghost">Log In</a>
-            <a href="{% url 'register' %}" class="btn-primary" style="height: 44px; font-size: 14px; padding: 0 24px;">Get Started</a>
+            <a href="{% url 'login' %}" class="btn btn-ghost">Log In</a>
+            <a href="{% url 'register' %}" class="btn btn-primary">Get Started</a>
         </div>
         {% endif %}
     </header>
 
-    {% if request.user.is_authenticated %}
-    <div class="mobile-drawer" id="mobileDrawer">
-        <div class="drawer-header">
-            <div class="user-profile-sm">
-                <div class="avatar-placeholder">{{ request.user.username|first|upper }}</div>
-                <div class="user-meta">
-                    <span class="name">{{ request.user.first_name|default:request.user.username }}</span>
-                    <span class="status">Online</span>
-                </div>
-            </div>
-            <button class="close-drawer" id="closeDrawer">&times;</button>
-        </div>
-        <ul class="mobile-menu">
-            <li><a href="{% url 'dashboard' %}" {% if section == 'dashboard' %}class="active"{% endif %}>Dashboard</a></li>
-            <li><a href="{% url 'images:list' %}" {% if section == 'images' %}class="active"{% endif %}>Images</a></li>
-            <li><a href="{% url 'user_list' %}" {% if section == 'people' %}class="active"{% endif %}>People</a></li>
-            <li class="divider"></li>
-            <li>
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="mobile-logout-link">Logout</button>
-                </form>
-            </li>
-        </ul>
-    </div>
-    <div class="drawer-overlay" id="drawerOverlay"></div>
-
-    <div class="bottom-nav">
-        <a href="{% url 'dashboard' %}" {% if section == 'dashboard' %}class="active"{% endif %}>
-            <span class="icon">🏠</span>
-            <span class="label">Home</span>
-        </a>
-        <a href="{% url 'images:list' %}" {% if section == 'images' %}class="active"{% endif %}>
-            <span class="icon">🖼️</span>
-            <span class="label">Images</span>
-        </a>
-        <a href="{% url 'user_list' %}" {% if section == 'people' %}class="active"{% endif %}>
-            <span class="icon">👥</span>
-            <span class="label">People</span>
-        </a>
-        <button class="bottom-menu-toggle" id="bottomMenuToggle">
-            <span class="icon">☰</span>
-            <span class="label">Menu</span>
-        </button>
-    </div>
-    {% endif %}
-
     {% if messages %}
-    <ul class="messages">
+    <ul class="messages" style="max-width: 800px; margin: 1rem auto; list-style: none; padding: 0 1rem;">
         {% for message in messages %}
-        <li class="{{ message.tags }}">
+        <li class="{{ message.tags }}" style="padding: 1rem; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border-default); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
             {{ message }}
-            <button type="button" class="close" onclick="this.parentElement.style.display='none';"></button>
+            <button type="button" class="close" onclick="this.parentElement.style.display='none';" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 1.2rem;">&times;</button>
         </li>
         {% endfor %}
     </ul>
     {% endif %}
 
-    <main id="content">
+    <main id="content" style="flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 4rem 2rem;">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer id="footer">
-        <p>© 2026 <a href="https://github.com/sumitsidharth" target="_blank" rel="noopener noreferrer">Sumit Sidharth</a>. All Rights Reserved. Crafted with passion.</p>
+    <footer id="footer" style="padding: 4rem 2rem; border-top: 1px solid var(--border-default); text-align: center; color: var(--foreground-muted); font-size: 0.9rem;">
+        <p>&copy; 2026 Bookmarks. Built with precision.</p>
     </footer>
 
     <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
     <script>
-        function togglePwd(inputId, btn) {
-            const inp = document.getElementById(inputId);
-            if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
-            else { inp.type = 'password'; btn.textContent = '👁'; }
-        }
-
         const csrftoken = Cookies.get('csrftoken');
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // Mobile Menu Toggle
-            const menuToggle = document.getElementById('menuToggle');
-            const bottomMenuToggle = document.getElementById('bottomMenuToggle');
-            const closeDrawer = document.getElementById('closeDrawer');
-            const mobileDrawer = document.getElementById('mobileDrawer');
-            const drawerOverlay = document.getElementById('drawerOverlay');
-
-            const showDrawer = () => {
-                mobileDrawer.classList.add('active');
-                drawerOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Scroll reveal logic
+            const observerOptions = {
+                threshold: 0.1
             };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
 
-            if (menuToggle) menuToggle.addEventListener('click', showDrawer);
-            if (bottomMenuToggle) bottomMenuToggle.addEventListener('click', showDrawer);
-
-                const hideDrawer = () => {
-                    mobileDrawer.classList.remove('active');
-                    drawerOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                };
-
-                if (closeDrawer) closeDrawer.addEventListener('click', hideDrawer);
-                drawerOverlay.addEventListener('click', hideDrawer);
-            }
-
-            // DOM loaded
+            document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+            
             {% block domready %}
             {% endblock %}
-        })
+        });
     </script>
-
 </body>
 
 </html>

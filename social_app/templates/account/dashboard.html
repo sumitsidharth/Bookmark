@@ -1,42 +1,79 @@
 {% extends "base.html" %}
 
-{% block title %}
-Dashboard
-{% endblock %}
+{% block title %}Dashboard — Bookmarks{% endblock %}
 
 {% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header scroll-reveal" style="margin-bottom: 4rem;">
+        <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1rem;">Hello, {{ request.user.first_name|default:request.user.username }}</h1>
+        <p style="color: var(--foreground-muted); font-size: 1.1rem;">Welcome to your digital command center.</p>
+    </div>
 
-<h1>Dashboard</h1>
+    <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 3rem;">
+        <div class="dashboard-main">
+            <section class="bookmarklet-section card scroll-reveal" style="margin-bottom: 3rem;">
+                <h3 style="margin-bottom: 1.5rem;">Quick Bookmarklet</h3>
+                <p style="color: var(--foreground-muted); margin-bottom: 2rem;">
+                    Drag this button to your bookmarks bar to save any image from across the web instantly.
+                </p>
+                <a href="javascript:(function(){if(window.myBookmarklet!==undefined){myBookmarklet();}else{document.body.appendChild(document.createElement('script')).src='https://127.0.0.1:8000/static/js/bookmarklet.js?r='+Math.floor(Math.random()*99999999999999999999);}})();" 
+                   class="btn btn-primary" style="padding: 1rem 2rem; border-radius: var(--radius-full);">
+                   ✦ Bookmark It
+                </a>
+            </section>
 
-{% with total_images_created=request.user.images_created.count %}
+            <section class="activity-section scroll-reveal" style="animation-delay: 0.2s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h2 style="font-size: 1.5rem;">Recent Activity</h2>
+                    <span style="font-family: monospace; font-size: 0.75rem; text-transform: uppercase; color: var(--foreground-subtle); letter-spacing: 0.1em;">Real-time feed</span>
+                </div>
+                
+                <div id="action-list">
+                    {% for action in actions %}
+                        {% include "actions/action/detail.html" %}
+                    {% empty %}
+                        <div class="card" style="text-align: center; color: var(--foreground-muted); padding: 4rem;">
+                            No activity yet. Follow people to see what's happening.
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
 
-<p>
-    Welcome to your dashboard.
-    You have bookmarked {{ total_images_created }} image{{ total_images_created|pluralize }}.
-</p>
+        <div class="dashboard-sidebar">
+            <section class="stats-card card scroll-reveal" style="margin-bottom: 2rem; animation-delay: 0.1s;">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1rem; color: var(--foreground-muted); text-transform: uppercase; letter-spacing: 0.05em;">Your Stats</h3>
+                {% with total_images_created=request.user.images_created.count %}
+                <div class="stat-item" style="margin-bottom: 1.5rem;">
+                    <div style="font-size: 2.5rem; font-weight: 700; color: var(--accent);">{{ total_images_created }}</div>
+                    <div style="font-size: 0.85rem; color: var(--foreground-subtle);">Images Bookmarked</div>
+                </div>
+                {% endwith %}
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a href="{% url 'edit' %}" class="btn btn-ghost" style="justify-content: flex-start; border: 1px solid var(--border-default);">Edit Profile</a>
+                    <a href="{% url 'password_change' %}" class="btn btn-ghost" style="justify-content: flex-start; border: 1px solid var(--border-default);">Change Password</a>
+                </div>
+            </section>
 
-{% endwith %}
-
-<p>
-    Drag the following button to your bookmarks toolbar to bookmark images from other websites:
-</p>
-
-<p>
-    <a href="javascript:(function(){if(window.myBookmarklet!==undefined){myBookmarklet();}else{document.body.appendChild(document.createElement('script')).src='http://127.0.0.1:8000/static/js/bookmarklet.js?r='+Math.floor(Math.random()*99999999999999999999);}})();" class="btn-primary">Bookmark it</a>
-</p>
-
-<p>
-    You can also
-    <a href="{% url 'edit' %}">edit your profile</a>
-    or
-    <a href="{% url 'password_change' %}">change your password</a>.
-</p>
-
-<h2>What's happening</h2>
-<div id="action-list">
-    {% for action in actions %}
-        {% include "actions/action/detail.html" %}
-    {% endfor %}
+            <section class="quick-links scroll-reveal" style="animation-delay: 0.3s;">
+                <h3 style="margin-bottom: 1rem; font-size: 0.9rem;">Discover</h3>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                    <li><a href="{% url 'images:list' %}" style="color: var(--foreground-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='var(--foreground)'" onmouseout="this.style.color='var(--foreground-muted)'">Explore trending images</a></li>
+                    <li><a href="{% url 'user_list' %}" style="color: var(--foreground-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='var(--foreground)'" onmouseout="this.style.color='var(--foreground-muted)'">Find people to follow</a></li>
+                </ul>
+            </section>
+        </div>
+    </div>
 </div>
 
+<style>
+@media (max-width: 1000px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-sidebar {
+        order: -1;
+    }
+}
+</style>
 {% endblock %}

@@ -1,52 +1,59 @@
 {% load thumbnail %}
 {% with user=action.user profile=action.user.profile %}
-<div class="action">
-    <div class="images">
-        {% if profile.photo %}
-            {% thumbnail user.profile.photo "80x80" crop="100%" as im %}
-            <a href="{{ user.get_absolute_url }}">
-                <img src="{{ im.url }}" alt="{{ user.get_full_name }}" class="item-img avatar">
-            </a>
-        {% else %}
-            <a href="{{ user.get_absolute_url }}">
-                <div class="item-img avatar-placeholder">
-                    {{ user.first_name|first|upper }}
+<div class="action-card card scroll-reveal" style="padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; transition: transform 0.3s var(--ease-out);">
+    <div class="action-visuals" style="display: flex; align-items: center; gap: -0.5rem;">
+        <!-- User Avatar -->
+        <a href="{{ user.get_absolute_url }}" style="z-index: 2;">
+            {% if profile.photo %}
+                {% thumbnail user.profile.photo "64x64" crop="100%" as im %}
+                <img src="{{ im.url }}" alt="{{ user.username }}" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--background-elevated); box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+            {% else %}
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); border: 2px solid var(--background-elevated); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                    {{ user.username|first|upper }}
                 </div>
-            </a>
-        {% endif %}
-        
+            {% endif %}
+        </a>
+
+        <!-- Target Image/User -->
         {% if action.target %}
             {% with target=action.target %}
-                {% if target.image %}
-                    {% thumbnail target.image "80x80" crop="100%" as im %}
-                    <a href="{{ target.get_absolute_url }}">
-                        <img src="{{ im.url }}" class="item-img target">
-                    </a>
-                {% elif target.profile.photo %}
-                    {% thumbnail target.profile.photo "80x80" crop="100%" as im %}
-                    <a href="{{ target.get_absolute_url }}">
-                        <img src="{{ im.url }}" class="item-img avatar target">
-                    </a>
-                {% endif %}
+                <a href="{{ target.get_absolute_url }}" style="margin-left: -12px; z-index: 1; transition: transform 0.2s;" onmouseover="this.style.transform='translateX(8px)'" onmouseout="this.style.transform='translateX(0)'">
+                    {% if target.image %}
+                        {% thumbnail target.image "64x64" crop="100%" as im %}
+                        <img src="{{ im.url }}" alt="Target" style="width: 48px; height: 48px; border-radius: 12px; border: 2px solid var(--background-elevated); opacity: 0.8;">
+                    {% elif target.profile.photo %}
+                        {% thumbnail target.profile.photo "64x64" crop="100%" as im %}
+                        <img src="{{ im.url }}" alt="Target" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--background-elevated); opacity: 0.8;">
+                    {% endif %}
+                </a>
             {% endwith %}
         {% endif %}
     </div>
-    <div class="info">
-        <p>
-            <span class="date">{{ action.created|timesince }} ago</span>
-            <br />
-            <a href="{{ user.get_absolute_url }}" class="username">
-                {{ user.get_full_name|default:user.username }}
-            </a>
-            <span class="verb">{{ action.verb }}</span>
-            {% if action.target %}
-                {% with target=action.target %}
-                    <a href="{{ target.get_absolute_url }}" class="target-link">
-                        {{ target.get_full_name|default:target }}
-                    </a>
-                {% endwith %}
-            {% endif %}
-        </p>
+
+    <div class="action-content" style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+            <p style="font-size: 0.95rem; line-height: 1.4;">
+                <a href="{{ user.get_absolute_url }}" style="color: var(--foreground); font-weight: 600; text-decoration: none;">
+                    {{ user.get_full_name|default:user.username }}
+                </a>
+                <span style="color: var(--foreground-muted);">{{ action.verb }}</span>
+                {% if action.target %}
+                    {% with target=action.target %}
+                        <a href="{{ target.get_absolute_url }}" style="color: var(--accent); font-weight: 500; text-decoration: none;">
+                            {{ target.get_full_name|default:target }}
+                        </a>
+                    {% endwith %}
+                {% endif %}
+            </p>
+            <span style="font-family: monospace; font-size: 0.7rem; color: var(--foreground-subtle); white-space: nowrap;">{{ action.created|timesince }} ago</span>
+        </div>
     </div>
 </div>
+
+<style>
+.action-card:hover {
+    transform: translateX(8px);
+    border-color: var(--border-accent);
+}
+</style>
 {% endwith %}
