@@ -97,6 +97,10 @@ def image_like(request):
 @login_required
 def image_list(request):
     images = Image.objects.all()
+    query = request.GET.get('q')
+    if query:
+        images = images.filter(title__icontains=query)
+    
     paginator = Paginator(images, 8)
     page = request.GET.get('page')
     images_only = request.GET.get('images_only')

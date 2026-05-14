@@ -40,6 +40,12 @@
                 </li>
             </ul>
         </nav>
+
+        <div class="search-wrapper desktop-only" style="margin: 0 2rem; flex: 1; max-width: 300px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search collective..." id="globalSearch" value="{{ request.GET.q }}">
+        </div>
+
         <div class="header-actions">
             <div class="user-info desktop-only">
                 <span>{{ request.user.first_name|default:request.user.username }}</span>
@@ -67,16 +73,6 @@
         {% endif %}
     </header>
 
-    {% if messages %}
-    <ul class="messages" style="max-width: 800px; margin: 1rem auto; list-style: none; padding: 0 1rem;">
-        {% for message in messages %}
-        <li class="{{ message.tags }}" style="padding: 1rem; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--border-default); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-            {{ message }}
-            <button type="button" class="close" onclick="this.parentElement.style.display='none';" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 1.2rem;">&times;</button>
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
 
     <main id="content" style="flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 4rem 2rem;">
         {% block content %}
@@ -87,11 +83,54 @@
         <p>&copy; 2026 Bookmarks. Built with precision.</p>
     </footer>
 
+    <div id="toast-container" class="toast-container"></div>
+
     <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
     <script>
         const csrftoken = Cookies.get('csrftoken');
+
+        function createToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️'
+            };
+            
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || '✨'}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 4000);
+            }, 4000);
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
+            // Handle Django messages as toasts
+            {% if messages %}
+                {% for message in messages %}
+                    createToast("{{ message }}", "{{ message.tags|default:'info' }}");
+                {% endfor %}
+            {% endif %}
+
+            // Global Search logic
+            const searchInput = document.getElementById('globalSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && searchInput.value.trim() !== '') {
+                        window.location.href = `/images/?q=${encodeURIComponent(searchInput.value.trim())}`;
+                    }
+                });
+            }
+
             // Scroll reveal logic
             const observerOptions = {
                 threshold: 0.1
