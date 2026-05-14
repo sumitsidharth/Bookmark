@@ -1,19 +1,95 @@
 {% extends "base.html" %}
-{% block title %}Bookmark an image{% endblock %}
+
+{% block title %}Bookmark an image — Bookmarks{% endblock %}
+
 {% block content %}
-    <h1>Bookmark an image</h1>
-    <div class="image-create-container">
-        <div class="image-preview-wrapper">
-            {% if preview_url %}
-                <img src="{{ preview_url }}" class="image-preview" alt="Image preview">
+<div class="page-header scroll-reveal" style="margin-bottom: 4rem;">
+    <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1rem;">Bookmark an image</h1>
+    <p style="color: var(--foreground-muted); font-size: 1.1rem;">Finalize your curated discovery.</p>
+</div>
+
+<div class="create-layout" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 4rem; align-items: start;">
+    <div class="image-preview-column scroll-reveal">
+        <div class="card" style="padding: 1rem; background: var(--surface); border-radius: var(--radius-xl); overflow: hidden;">
+            {% if request.GET.url %}
+                <img src="{{ request.GET.url }}" alt="Preview" style="width: 100%; border-radius: var(--radius-lg); display: block; max-height: 500px; object-fit: contain;">
+            {% else %}
+                <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--foreground-subtle); border: 2px dashed var(--border-default); border-radius: var(--radius-lg);">
+                    No image selected
+                </div>
             {% endif %}
         </div>
-        <div class="image-form-wrapper">
+    </div>
+
+    <div class="form-column scroll-reveal" style="animation-delay: 0.2s;">
+        <div class="card">
             <form method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <input type="submit" value="Bookmark it!" class="btn-submit">
+                
+                <div class="field-group">
+                    <label class="field-label" for="{{ form.title.id_for_label }}">Title</label>
+                    <div class="input-wrapper">
+                        {{ form.title }}
+                    </div>
+                    {% if form.title.errors %}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ form.title.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="{{ form.url.id_for_label }}">Image URL</label>
+                    <div class="input-wrapper">
+                        {{ form.url }}
+                    </div>
+                    {% if form.url.errors %}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ form.url.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="{{ form.description.id_for_label }}">Description</label>
+                    <div class="input-wrapper">
+                        {{ form.description }}
+                    </div>
+                    {% if form.description.errors %}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 0.4rem;">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem; padding: 1rem;">Bookmark it! →</button>
             </form>
         </div>
     </div>
+</div>
+
+<style>
+@media (max-width: 900px) {
+    .create-layout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+}
+
+/* Style the Django form widgets */
+input[type="text"], textarea, input[type="url"] {
+    width: 100%;
+    background: #0F0F12;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: var(--transition-fast);
+}
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(94, 106, 210, 0.2);
+}
+</style>
 {% endblock %}
