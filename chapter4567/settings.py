@@ -27,6 +27,9 @@ SECRET_KEY = 'django-insecure-c3(*9h%y!1%k)5d&e+t+bk4#!vcrddl7i&#imyobmvb1e)(5!2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+ALLOWED_HOSTS = ['sumitsidharth.pythonanywhere.com', '127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = ['https://sumitsidharth.pythonanywhere.com']
+
 if DEBUG:
     import mimetypes
     mimetypes.add_type('application/javascript', '.js', True)
