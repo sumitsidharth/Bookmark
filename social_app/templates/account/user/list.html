@@ -11,7 +11,7 @@
 
 <div id="people-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem;">
     {% for user in users %}
-        <div class="user-card card scroll-reveal" style="text-align: center; padding: 2.5rem 1.5rem; animation-delay: {{ forloop.counter0|add:1|multiply:0.05 }}s;">
+        <div class="user-card card scroll-reveal" style="text-align: center; padding: 2.5rem 1.5rem;">
             <a href="{{ user.get_absolute_url }}" style="text-decoration: none; display: block; color: inherit;">
                 <div class="avatar-wrapper" style="margin-bottom: 1.5rem; position: relative; display: inline-block;">
                     {% if user.profile.photo %}
