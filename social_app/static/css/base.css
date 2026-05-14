@@ -170,130 +170,126 @@ a:hover {
 }
 
 /* ── Navigation Header (Clay Convex) ─────────────────────────── */
+/* ── 3D Clay Objects (Cube & Sphere) ────────────────────────── */
+.blob-container {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -10;
+}
+
+.blob {
+    position: absolute;
+    animation: clay-float-slow 12s infinite alternate ease-in-out;
+}
+
+/* The Purple Cube from Reference */
+.blob-1 {
+    width: 80px;
+    height: 80px;
+    background: #A78BFA;
+    top: 25%;
+    left: 10%;
+    border-radius: 24px;
+    box-shadow: 
+        12px 12px 24px rgba(124, 58, 237, 0.3),
+        inset 6px 6px 12px rgba(255, 255, 255, 0.4),
+        inset -6px -6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* The Pink Sphere from Reference */
+.blob-2 {
+    width: 120px;
+    height: 120px;
+    background: #F472B6;
+    top: 40%;
+    right: 15%;
+    border-radius: var(--radius-full);
+    box-shadow: 
+        16px 16px 32px rgba(219, 39, 119, 0.3),
+        inset 10px 10px 20px rgba(255, 255, 255, 0.4),
+        inset -10px -10px 20px rgba(0, 0, 0, 0.1);
+    animation-delay: -4s;
+}
+
+@keyframes clay-float-slow {
+    0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    100% { transform: translate(30px, -20px) rotate(10deg) scale(1.05); }
+}
+
+/* ── Marshmallow Floating Header ─────────────────────────── */
 #header {
     position: sticky;
-    top: 20px;
+    top: 24px;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 32px;
-    height: 72px;
-    margin: 0 40px;
-    background: var(--surface);
-    backdrop-filter: blur(20px);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-clay-convex);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-#header .logo {
-    font-size: 24px;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text);
-}
-
-#header .logo span {
-    background: linear-gradient(135deg, var(--primary), var(--primary-alt));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-nav ul.menu {
-    display: flex;
-    list-style: none;
-    gap: 12px;
-    background: #EFEBF5;
-    padding: 8px;
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-clay-pressed);
-}
-
-nav ul.menu li a {
-    padding: 10px 24px;
-    border-radius: var(--radius-full);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-secondary);
-    transition: all var(--t-base);
-}
-
-nav ul.menu li a:hover {
-    color: var(--primary);
-    transform: translateY(-2px);
-}
-
-nav ul.menu li.selected a {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3);
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-#header .logout-btn {
-    background: white;
-    border: none;
-    color: var(--text);
-    padding: 10px 24px;
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 800;
-    box-shadow: var(--shadow-clay-convex);
-    transition: all var(--t-base);
-}
-
-#header .logout-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 12px 12px 24px rgba(0, 0, 0, 0.1);
-}
-
-#header .logout-btn:active {
-    transform: scale(0.95);
-    box-shadow: var(--shadow-clay-pressed);
-}
-
-/* ── Main Content Area (Clay Card) ────────────────────────── */
-#content {
-    flex: 1;
+    padding: 0 40px;
+    height: 84px;
+    margin: 0 auto;
     max-width: 1000px;
-    margin: 60px auto;
-    padding: 64px;
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(20px);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-clay-card);
+    border-radius: 40px;
+    box-shadow: var(--shadow-clay-convex);
     border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
-#content h1 {
-    font-size: 48px;
+#header .logo {
+    font-size: 26px;
+    color: var(--primary);
     font-weight: 900;
-    margin-bottom: 32px;
-    color: var(--text);
-    line-height: 1.1;
+}
+
+nav ul.menu {
+    background: transparent;
+    box-shadow: none;
+    gap: 24px;
+}
+
+nav ul.menu li a {
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+/* ── Main Content Area (Open Hero Layout) ────────────────── */
+#content {
+    flex: 1;
+    max-width: 1100px;
+    margin: 80px auto;
+    padding: 0 40px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+/* Hero Typography Match */
+#content h1 {
+    font-size: 84px;
+    text-align: center;
+    color: #2D2A33;
+    margin-bottom: 24px;
+    letter-spacing: -0.04em;
 }
 
 #content p {
-    font-size: 18px;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-    max-width: 650px;
+    text-align: center;
+    margin: 0 auto 48px auto;
+    font-size: 20px;
+    line-height: 1.5;
+    color: #635F69;
 }
 
 /* ── Professional Form System (Recessed Clay) ─────────────── */
 .form-wrapper {
     max-width: 440px;
     margin-top: 48px;
+    background: white;
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-clay-card);
 }
 
 .field-label {
@@ -336,23 +332,25 @@ nav ul.menu li.selected a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    padding: 0 48px;
     height: 64px;
-    background: gradient(to br, var(--primary), var(--primary-alt));
-    background: linear-gradient(135deg, #A78BFA, var(--primary));
+    background: linear-gradient(135deg, #A78BFA, #7C3AED);
     color: white;
     font-size: 18px;
     font-weight: 800;
     border: none;
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-clay-convex);
+    border-radius: 20px;
+    box-shadow: 
+        0 12px 24px rgba(124, 58, 237, 0.4),
+        inset 4px 4px 8px rgba(255, 255, 255, 0.3);
     cursor: pointer;
     transition: all var(--t-base);
+    width: auto;
 }
 
 .btn-primary:hover, button[type="submit"]:not(.logout-btn):hover {
     transform: translateY(-4px);
-    box-shadow: 16px 16px 32px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.5);
 }
 
 .btn-primary:active, button[type="submit"]:not(.logout-btn):active {
