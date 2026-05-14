@@ -31,13 +31,15 @@ def image_create(request):
         form = ImageCreateForm(data=request.POST)
 
         if form.is_valid():
-            new_image = form.save(commit=False)
-            new_image.user = request.user
-            new_image.save()
-            create_action(request.user, 'bookmarked image', new_image)
-            messages.success(request, 'Image added successfully')
-
-            return redirect(new_image.get_absolute_url())
+            try:
+                new_image = form.save(commit=False)
+                new_image.user = request.user
+                new_image.save()
+                create_action(request.user, 'bookmarked image', new_image)
+                messages.success(request, 'Image added successfully')
+                return redirect(new_image.get_absolute_url())
+            except ValueError as e:
+                form.add_error(None, str(e))
     else:
         initial = {
             'title': request.GET.get('title', ''),

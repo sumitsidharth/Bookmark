@@ -56,9 +56,14 @@ class ImageCreateForm(forms.ModelForm):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
         }
-        response = requests.get(image_url, headers=headers, timeout=10)
-        if response.status_code != 200:
-            raise ValueError("Failed to download image")
+        try:
+            response = requests.get(image_url, headers=headers, timeout=10)
+            if response.status_code != 200:
+                raise ValueError(f"Server returned status {response.status_code}")
+        except requests.exceptions.ProxyError:
+            raise ValueError("The server is blocked by a proxy. This is common on PythonAnywhere Free accounts for certain websites.")
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Failed to download image: {str(e)}")
 
         image.image.save(
             image_name,
