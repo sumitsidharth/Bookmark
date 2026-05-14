@@ -28,7 +28,7 @@ r = redis.Redis(host=settings.REDIS_HOST,
 @login_required
 def image_create(request):
     if request.method == 'POST':
-        form = ImageCreateForm(data=request.POST)
+        form = ImageCreateForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
             try:
