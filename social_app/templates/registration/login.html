@@ -4,17 +4,23 @@
 
 {% block content %}
 
-<h1>Welcome back</h1>
+<div class="hero-section">
+  <div class="clay-pill">
+    <span class="dot"></span> Join 50,000+ teams already using Acme
+  </div>
+  <h1>Transform the way<br>your team works</h1>
+  <p style="max-width: 600px; margin: 0 auto 40px auto; color: var(--text-secondary); font-size: 18px; line-height: 1.6;">
+    Acme Platform brings your team together with powerful tools designed to streamline workflows, boost productivity, and drive results.
+  </p>
+</div>
 
 {% if form.errors %}
-<div class="error-banner" role="alert">
+<div class="error-banner" role="alert" style="max-width: 440px; margin: 0 auto 20px auto;">
   Your username or password didn't match. Please try again.
 </div>
-{% else %}
-<p>Sign in to your account. Don't have one? <a href="{% url 'register' %}">Create an account</a>.</p>
 {% endif %}
 
-<form action="{% url 'login' %}" method="post" id="login-form" class="form-wrapper">
+<form action="{% url 'login' %}" method="post" id="login-form" class="form-wrapper" style="margin: 0 auto;">
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ next }}">
 

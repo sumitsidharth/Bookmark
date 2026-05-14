@@ -26,7 +26,7 @@
 
     <header id="header">
         <div class="logo">
-            <span>📌</span> Bookmarks
+            <span style="font-family: 'Nunito', sans-serif;">Acme Inc.</span>
         </div>
 
         {% if request.user.is_authenticated %}
@@ -43,10 +43,7 @@
                 </li>
             </ul>
         </nav>
-        {% endif %}
-
         <div class="header-actions">
-            {% if request.user.is_authenticated %}
             <div class="user-info desktop-only">
                 <span>Logged in as <strong>{{ request.user.first_name|default:request.user.username }}</strong></span>
             </div>
@@ -59,10 +56,20 @@
                 <span class="bar"></span>
                 <span class="bar"></span>
             </button>
-            {% else %}
-            <a href="{% url 'login' %}" class="btn-primary" style="padding: 8px 20px; font-size: 13px;">Log in</a>
-            {% endif %}
         </div>
+        {% else %}
+        <nav class="desktop-nav">
+            <ul class="menu" style="background: transparent; box-shadow: none;">
+                <li><a href="#" style="color: var(--text-secondary); font-weight: 800;">Features</a></li>
+                <li><a href="#" style="color: var(--text-secondary); font-weight: 800;">Pricing</a></li>
+                <li><a href="#" style="color: var(--text-secondary); font-weight: 800;">About</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="{% url 'login' %}" class="btn-ghost">Log In</a>
+            <a href="{% url 'register' %}" class="btn-primary" style="height: 44px; font-size: 14px; padding: 0 24px;">Get Started</a>
+        </div>
+        {% endif %}
     </header>
 
     {% if request.user.is_authenticated %}
