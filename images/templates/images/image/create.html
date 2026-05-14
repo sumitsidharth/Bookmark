@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Bookmark an image{% endblock %}
+{% block content %}
+    <h1>Bookmark an image</h1>
+    <div class="image-create-container">
+        <div class="image-preview-wrapper">
+            {% if preview_url %}
+                <img src="{{ preview_url }}" class="image-preview" alt="Image preview">
+            {% endif %}
+        </div>
+        <div class="image-form-wrapper">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Bookmark it!" class="btn-submit">
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+db.sqlite3
+
+# Security
+cert.crt
+cert.key
+.env
+
+# Media
+media/
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store

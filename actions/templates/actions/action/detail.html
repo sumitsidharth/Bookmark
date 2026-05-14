@@ -1,0 +1,52 @@
+{% load thumbnail %}
+{% with user=action.user profile=action.user.profile %}
+<div class="action">
+    <div class="images">
+        {% if profile.photo %}
+            {% thumbnail user.profile.photo "80x80" crop="100%" as im %}
+            <a href="{{ user.get_absolute_url }}">
+                <img src="{{ im.url }}" alt="{{ user.get_full_name }}" class="item-img avatar">
+            </a>
+        {% else %}
+            <a href="{{ user.get_absolute_url }}">
+                <div class="item-img avatar-placeholder">
+                    {{ user.first_name|first|upper }}
+                </div>
+            </a>
+        {% endif %}
+        
+        {% if action.target %}
+            {% with target=action.target %}
+                {% if target.image %}
+                    {% thumbnail target.image "80x80" crop="100%" as im %}
+                    <a href="{{ target.get_absolute_url }}">
+                        <img src="{{ im.url }}" class="item-img target">
+                    </a>
+                {% elif target.profile.photo %}
+                    {% thumbnail target.profile.photo "80x80" crop="100%" as im %}
+                    <a href="{{ target.get_absolute_url }}">
+                        <img src="{{ im.url }}" class="item-img avatar target">
+                    </a>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    </div>
+    <div class="info">
+        <p>
+            <span class="date">{{ action.created|timesince }} ago</span>
+            <br />
+            <a href="{{ user.get_absolute_url }}" class="username">
+                {{ user.get_full_name|default:user.username }}
+            </a>
+            <span class="verb">{{ action.verb }}</span>
+            {% if action.target %}
+                {% with target=action.target %}
+                    <a href="{{ target.get_absolute_url }}" class="target-link">
+                        {{ target.get_full_name|default:target }}
+                    </a>
+                {% endwith %}
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endwith %}

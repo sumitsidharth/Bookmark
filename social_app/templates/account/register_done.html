@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome! — Bookmarks{% endblock %}
+
+{% block content %}
+
+<h1>Account created! 🎉</h1>
+
+<div class="card-success">
+  <span class="icon">✅</span>
+  <div>
+    <h2>Welcome, {{ new_user.first_name|default:new_user.username }}!</h2>
+    <p>Your Bookmarks account has been successfully created. You're all set to start saving your favourite links.</p>
+  </div>
+</div>
+
+<p class="mt-4">
+  <a href="{% url 'login' %}" class="btn-primary">Sign in to your account →</a>
+</p>
+
+{% endblock %}

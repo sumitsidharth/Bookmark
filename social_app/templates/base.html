@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bookmarks – save, share, and discover great links.">
+    <title>{% block title %}Bookmarks{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="{% static 'css/base.css' %}?v=1.2" rel="stylesheet">
+</head>
+
+<body>
+
+    <header id="header">
+        <div class="logo">
+            <span>📌</span> Bookmarks
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <nav>
+            <ul class="menu">
+                <li {% if section == 'dashboard' %}class="selected" {% endif %}>
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                <li {% if section == "images" %}class="selected"{% endif %}>
+                    <a href="{% url "images:list" %}">Images</a>
+                </li>
+                <li {% if section == 'people' %}class="selected" {% endif %}>
+                    <a href="{% url 'user_list' %}">People</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+
+        <div class="user">
+            {% if request.user.is_authenticated %}
+            <span>Logged in as <strong>{{ request.user.first_name|default:request.user.username }}</strong></span>
+
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-primary" style="padding: 8px 20px; font-size: 13px;">Log in</a>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">
+            {{ message }}
+            <button type="button" class="close" onclick="this.parentElement.style.display='none';"></button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <main id="content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer id="footer">
+        <p>© 2026 <a href="https://github.com/sumitsidharth" target="_blank" rel="noopener noreferrer">Sumit Sidharth</a>. All Rights Reserved. Crafted with passion.</p>
+    </footer>
+
+    <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script>
+        function togglePwd(inputId, btn) {
+            const inp = document.getElementById(inputId);
+            if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+            else { inp.type = 'password'; btn.textContent = '👁'; }
+        }
+
+        const csrftoken = Cookies.get('csrftoken');
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // DOM loaded
+            {% block domready %}
+            {% endblock %}
+        })
+    </script>
+
+</body>
+
+</html>

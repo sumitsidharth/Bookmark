@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in — Bookmarks{% endblock %}
+
+{% block content %}
+
+<h1>Welcome back</h1>
+
+{% if form.errors %}
+<div class="error-banner" role="alert">
+  Your username or password didn't match. Please try again.
+</div>
+{% else %}
+<p>Sign in to your account. Don't have one? <a href="{% url 'register' %}">Create an account</a>.</p>
+{% endif %}
+
+<form action="{% url 'login' %}" method="post" id="login-form" class="form-wrapper">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+
+  <!-- Username -->
+  <div class="field-group {% if form.username.errors %}is-invalid{% endif %}">
+    <label class="field-label" for="id_username">
+      Username <span class="required-star" aria-hidden="true">*</span>
+    </label>
+    <div class="input-wrapper">
+      <span class="input-icon" aria-hidden="true">👤</span>
+      <input type="text"
+             id="id_username"
+             name="username"
+             placeholder="Enter your username"
+             value="{{ form.username.value|default:'' }}"
+             autocomplete="username"
+             aria-required="true"
+             aria-invalid="{% if form.username.errors %}true{% else %}false{% endif %}"
+             {% if form.username.errors %}aria-describedby="username-error"{% endif %}
+             autofocus>
+    </div>
+    {% for error in form.username.errors %}
+      <span class="field-error" id="username-error">{{ error }}</span>
+    {% endfor %}
+  </div>
+
+  <!-- Password -->
+  <div class="field-group {% if form.password.errors %}is-invalid{% endif %}">
+    <label class="field-label" for="id_password">
+      Password <span class="required-star" aria-hidden="true">*</span>
+    </label>
+    <div class="input-wrapper">
+      <span class="input-icon" aria-hidden="true">🔒</span>
+      <input type="password"
+             id="id_password"
+             name="password"
+             placeholder="Enter your password"
+             autocomplete="current-password"
+             aria-required="true"
+             aria-invalid="{% if form.password.errors %}true{% else %}false{% endif %}"
+             {% if form.password.errors %}aria-describedby="password-error"{% endif %}>
+      <button type="button" class="pwd-toggle" onclick="togglePwd('id_password', this)" aria-label="Show or hide password">👁</button>
+    </div>
+    {% for error in form.password.errors %}
+      <span class="field-error" id="password-error">{{ error }}</span>
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="btn-submit">Sign in →</button>
+</form>
+
+<p class="text-muted mt-4">
+  <a href="{% url 'password_reset' %}">🔑 Forgot your password?</a>
+</p>
+
+<div class="divider">or continue with</div>
+<div class="social">
+  <ul>
+    <li class="google">
+      <a href="{% url 'social:begin' 'google-oauth2' %}">Sign in with Google</a>
+    </li>
+  </ul>
+</div>
+
+{% endblock %}
+
