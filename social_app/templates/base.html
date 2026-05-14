@@ -24,7 +24,7 @@
         </div>
 
         {% if request.user.is_authenticated %}
-        <nav>
+        <nav class="desktop-nav">
             <ul class="menu">
                 <li {% if section == 'dashboard' %}class="selected" {% endif %}>
                     <a href="{% url 'dashboard' %}">Dashboard</a>
@@ -39,19 +39,72 @@
         </nav>
         {% endif %}
 
-        <div class="user">
+        <div class="header-actions">
             {% if request.user.is_authenticated %}
-            <span>Logged in as <strong>{{ request.user.first_name|default:request.user.username }}</strong></span>
-
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+            <div class="user-info desktop-only">
+                <span>Logged in as <strong>{{ request.user.first_name|default:request.user.username }}</strong></span>
+            </div>
+            <form action="{% url 'logout' %}" method="post" class="desktop-only" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit">Logout</button>
+                <button type="submit" class="logout-btn">Logout</button>
             </form>
+            <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
             {% else %}
             <a href="{% url 'login' %}" class="btn-primary" style="padding: 8px 20px; font-size: 13px;">Log in</a>
             {% endif %}
         </div>
     </header>
+
+    {% if request.user.is_authenticated %}
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="drawer-header">
+            <div class="user-profile-sm">
+                <div class="avatar-placeholder">{{ request.user.username|first|upper }}</div>
+                <div class="user-meta">
+                    <span class="name">{{ request.user.first_name|default:request.user.username }}</span>
+                    <span class="status">Online</span>
+                </div>
+            </div>
+            <button class="close-drawer" id="closeDrawer">&times;</button>
+        </div>
+        <ul class="mobile-menu">
+            <li><a href="{% url 'dashboard' %}" {% if section == 'dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+            <li><a href="{% url 'images:list' %}" {% if section == 'images' %}class="active"{% endif %}>Images</a></li>
+            <li><a href="{% url 'user_list' %}" {% if section == 'people' %}class="active"{% endif %}>People</a></li>
+            <li class="divider"></li>
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="mobile-logout-link">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <div class="bottom-nav">
+        <a href="{% url 'dashboard' %}" {% if section == 'dashboard' %}class="active"{% endif %}>
+            <span class="icon">🏠</span>
+            <span class="label">Home</span>
+        </a>
+        <a href="{% url 'images:list' %}" {% if section == 'images' %}class="active"{% endif %}>
+            <span class="icon">🖼️</span>
+            <span class="label">Images</span>
+        </a>
+        <a href="{% url 'user_list' %}" {% if section == 'people' %}class="active"{% endif %}>
+            <span class="icon">👥</span>
+            <span class="label">People</span>
+        </a>
+        <button class="bottom-menu-toggle" id="bottomMenuToggle">
+            <span class="icon">☰</span>
+            <span class="label">Menu</span>
+        </button>
+    </div>
+    {% endif %}
 
     {% if messages %}
     <ul class="messages">
@@ -84,6 +137,32 @@
         const csrftoken = Cookies.get('csrftoken');
 
         document.addEventListener('DOMContentLoaded', (event) => {
+            // Mobile Menu Toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const bottomMenuToggle = document.getElementById('bottomMenuToggle');
+            const closeDrawer = document.getElementById('closeDrawer');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            const drawerOverlay = document.getElementById('drawerOverlay');
+
+            const showDrawer = () => {
+                mobileDrawer.classList.add('active');
+                drawerOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+
+            if (menuToggle) menuToggle.addEventListener('click', showDrawer);
+            if (bottomMenuToggle) bottomMenuToggle.addEventListener('click', showDrawer);
+
+                const hideDrawer = () => {
+                    mobileDrawer.classList.remove('active');
+                    drawerOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                };
+
+                if (closeDrawer) closeDrawer.addEventListener('click', hideDrawer);
+                drawerOverlay.addEventListener('click', hideDrawer);
+            }
+
             // DOM loaded
             {% block domready %}
             {% endblock %}
