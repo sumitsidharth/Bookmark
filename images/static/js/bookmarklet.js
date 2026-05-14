@@ -1,4 +1,9 @@
-const siteUrl = 'http://127.0.0.1:8000/';
+// Dynamic site URL detection
+const script = document.currentScript || (function() {
+  var scripts = document.getElementsByTagName('script');
+  return scripts[scripts.length - 1];
+})();
+const siteUrl = script.src.split('/static/')[0] + '/';
 const styleUrl = siteUrl + 'static/css/bookmarklet.css';
 
 const minWidth = 250;
